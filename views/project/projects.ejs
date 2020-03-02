@@ -1,0 +1,122 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<br>
+
+<div class="container">
+  <h1>Projects</h1>
+  <hr>
+  <h2>Filter</h2>
+
+  <form class="container col-sm-11">
+    <div class="form-group row">
+      <label for="inputEmail3" class="col-sm-2 col-form-label">
+        <input class="form-check-input" type="checkbox" id="gridCheck1">ID</label>
+      <div class="col-sm-10">
+        <input type="number" class="form-control" id="id" placeholder="ID">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="inputPassword3" class="col-sm-2 col-form-label">
+        <input class="form-check-input" type="checkbox" id="gridCheck1">Name</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" id="name" placeholder="Name">
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="inputPassword3" class="col-sm-2 col-form-label">
+        <input class="form-check-input" type="checkbox" id="gridCheck1">Member</label>
+      <div class="col-sm-10">
+        <select class="form-control" name="member" id="member">
+          <option selected disabled>Choose the member</option>
+          <option>Naya</option>
+          <option>Lini</option>
+        </select>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="form-group row">
+      <div>
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+        <a href="/" class="btn btn-outline-danger">Reset</a>
+      </div>
+    </div>
+  </form>
+  <hr>
+  <h2>Options</h2>
+  <form class="container col-sm-11">
+    <div class="form-group row">
+      <label for="inputEmail3" class="col-sm-2 col-form-label">
+        <input class="form-check-input" type="checkbox" id="gridCheck1">ID</label>
+    </div>
+    <div class="form-group row">
+      <label for="inputPassword3" class="col-sm-2 col-form-label">
+        <input class="form-check-input" type="checkbox" id="gridCheck1">Name</label>
+    </div>
+    <div class="form-group row">
+      <label for="inputPassword3" class="col-sm-2 col-form-label">
+        <input class="form-check-input" type="checkbox" id="gridCheck1">Member</label>
+    </div>
+
+    <br>
+
+    <div class="form-group row">
+      <div>
+        <button type="submit" class="btn btn-outline-primary"><i class='far fa-check-circle'></i> Apply</button>
+      </div>
+    </div>
+  </form>
+  <hr>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col" style="text-align: center;">ID</th>
+        <th scope="col" style="text-align: center;">Name</th>
+        <th scope="col" style="text-align: center;">Member</th>
+        <th scope="col" style="text-align: center;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row" style="text-align: center;">1</th>
+        <td style="text-align: center;">Mark</td>
+        <td style="text-align: center;">Otto</td>
+        <td style="text-align: center;">
+          <a href=""><button type="submit" class="btn btn-success">Edit</button></a>
+          <a href=""><button type="submit" class="btn btn-danger">Delete</button></a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="container">
+    <a href="/add" class="btn btn-outline-primary">Add Data</a>
+  </div>
+
+  <br>
+
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+      </li>
+      <li class="page-item"><a class="page-link" href="#">1</a></li>
+      <li class="page-item">
+        <a class="page-link" href="#">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+  integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+  integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+  integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+
+</html>
