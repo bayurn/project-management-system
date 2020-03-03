@@ -18,23 +18,23 @@ module.exports = pool => {
     const { checkId, checkName, checkEmail, checkPosition, checkTypeJob, inputId, inputName, inputEmail, inputPosition, inputTypeJob } = req.query;
 
     if (checkId && inputId) {
-      result.push(`userid = ${inputId}`)
+      result.push(`userid=${inputId}`)
     }
 
     if (checkName && inputName) {
-      result.push(`CONCAT(users.firstname,' ',users.lastname) LIKE '%${inoutNam}%`)
+      result.push(`CONCAT(users.firstname,' ',users.lastname) LIKE '%${inputName}%`)
     }
 
     if (checkEmail && inputEmail) {
-      result.push(`email = ${inputEmail}`)
+      result.push(`email=${inputEmail}`)
     }
 
     if (checkPosition && inputPosition) {
-      result.push(`position = ${inputPosition}`)
+      result.push(`position=${inputPosition}`)
     }
 
     if (checkTypeJob && inputTypeJob) {
-      result.push(`isfulltime = ${inputTypeJob == 'Full TIme' ? true : false}`)
+      result.push(`isfulltime=${inputTypeJob == 'Full Time' ? true : false}`)
     }
 
     if (result.length > 0) {
@@ -58,8 +58,10 @@ module.exports = pool => {
 
     pool.query(sql, (err, data) => {
       if (err) res.status(500).json(err);
+
       const totalPage = Math.ceil(data.rows.length / limit);
       const link = req.url == '/' ? '/?page=1' : req.url;
+
       sql = sql + ` LIMIT ${limit} OFFSET ${offset}`;
 
       pool.query(sql, (err, data) => {
@@ -80,9 +82,20 @@ module.exports = pool => {
             page: parseInt(page),
             link,
             query: req.query
+
           })
         })
       })
+    })
+  });
+
+  router.post('/', isLoggedIn, (req, res, next) => {
+    let user = req.session.user;
+    let sqlEdit = `UPDATE users SET option='${JSON.stringify(req.body)}' WHERE userid=${user.userid}`;
+    
+    pool.query(sqlEdit, err => {
+      if (err) res.status(500).json(err);
+      res.redirect('/users');
     })
   })
 
@@ -107,6 +120,8 @@ module.exports = pool => {
     const user = req.session.user;
     const {userid} = req.params
     let sql = `SELECT * FROM users WHERE userid=${userid}`;
+    console.log(sql);
+    
     pool.query(sql, (err, data) => {
       if (err) res.status(500).json(err);
       let result = data.rows[0];
