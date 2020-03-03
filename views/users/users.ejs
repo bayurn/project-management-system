@@ -8,33 +8,34 @@
     <hr>
     <h2>Filter</h2>
 
-    <form class="container col-sm-11">
+    <form class="container col-sm-11" method="GET">
         <div class="form-group row">
-            <label for="inputEmail3" class="col-sm-2 col-form-label">
-                <input class="form-check-input" type="checkbox" id="gridCheck1">ID</label>
+            <input type="hidden" name="page" value="1">
+            <label for="inputEmail" class="col-sm-2 col-form-label">
+                <input class="form-check-input" type="checkbox" id="gridCheck1" name="checkId">ID</label>
             <div class="col-sm-10">
-                <input type="number" class="form-control" id="id" placeholder="ID">
+                <input type="number" class="form-control" id="id" name="inputId" placeholder="ID">
             </div>
         </div>
         <div class="form-group row">
             <label for="inputPassword3" class="col-sm-2 col-form-label">
-                <input class="form-check-input" type="checkbox" id="gridCheck1">Name</label>
+                <input class="form-check-input" type="checkbox" id="gridCheck1" name="checkName">Name</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="name" placeholder="Name">
+                <input type="text" class="form-control" id="name" name="inputName" placeholder="Name">
             </div>
         </div>
         <div class="form-group row">
             <label for="inputPassword3" class="col-sm-2 col-form-label">
-                <input class="form-check-input" type="checkbox" id="gridCheck1">Email</label>
+                <input class="form-check-input" type="checkbox" id="gridCheck1" name="checkEmail">Email</label>
             <div class="col-sm-10">
-                <input type="email" class="form-control" id="name" placeholder="Email">
+                <input type="email" class="form-control" id="inputEmail" name="inputEmail" placeholder="Email">
             </div>
         </div>
         <div class="form-group row">
             <label for="inputPassword3" class="col-sm-2 col-form-label">
-                <input class="form-check-input" type="checkbox" id="gridCheck1">Type Jobs</label>
+                <input class="form-check-input" type="checkbox" id="gridCheck1" name="checkTypeJob">Type Jobs</label>
             <div class="col-sm-10">
-                <select class="form-control" name="member" id="member">
+                <select class="form-control" name="inputTypeJob" id="member">
                     <option selected disabled>Choose the Job Type</option>
                     <option>Full Time</option>
                     <option>Part Time</option>
@@ -43,9 +44,9 @@
         </div>
         <div class="form-group row">
             <label for="inputPassword3" class="col-sm-2 col-form-label">
-                <input class="form-check-input" type="checkbox" id="gridCheck1">Position</label>
+                <input class="form-check-input" type="checkbox" id="gridCheck1" name="checkPosition">Position</label>
             <div class="col-sm-10">
-                <select class="form-control" name="member" id="member">
+                <select class="form-control" name="inputPosition" id="member">
                     <option selected disabled>Choose the Position</option>
                     <option>Manager</option>
                     <option>Software Developer</option>
@@ -59,13 +60,13 @@
         <div class="form-group row">
             <div>
                 <button type="submit" class="btn btn-outline-primary">Search</button>
-                <a href="/" class="btn btn-outline-danger">Reset</a>
+                <a href="/users" class="btn btn-outline-danger">Reset</a>
             </div>
         </div>
     </form>
     <hr>
     <h2>Options</h2>
-    <form class="container col-sm-11">
+    <form class="container col-sm-11" method="POST">
         <div class="form-group row">
             <label for="inputEmail3" class="col-sm-2 col-form-label">
                 <input class="form-check-input" type="checkbox" id="gridCheck1">ID</label>
@@ -90,37 +91,56 @@
         <thead>
             <tr>
                 <th scope="col" style="text-align: center;">ID</th>
+                <th scope="col" style="text-align: center;">Email</th>
                 <th scope="col" style="text-align: center;">Name</th>
-                <th scope="col" style="text-align: center;">Member</th>
+                <th scope="col" style="text-align: center;">Position</th>
+                <th scope="col" style="text-align: center;">Type Job</th>
                 <th scope="col" style="text-align: center;">Action</th>
             </tr>
         </thead>
         <tbody>
+            <% result.forEach((item, index) => { %>
             <tr>
-                <th scope="row" style="text-align: center;">1</th>
-                <td style="text-align: center;">Mark</td>
-                <td style="text-align: center;">Otto</td>
+                <th style="text-align: center;"><%= item.userid %></th>
+                <td style="text-align: center;"><%= item.email %></td>
+                <td style="text-align: center;"><%= item.name %></td>
+                <td style="text-align: center;"><%= item.position %></td>
+                <td style="text-align: center;"><%= item.isfulltime %></td>
                 <td style="text-align: center;">
-                    <a href=""><button type="submit" class="btn btn-success">Edit</button></a>
-                    <a href=""><button type="submit" class="btn btn-danger">Delete</button></a>
+                    <a href="/users/edit/<%= item.userid %>"><button type="submit"
+                            class="btn btn-success">Edit</button></a>
+                    <a href="/users/delete/<%= item.userid %>"><button type="submit"
+                            class="btn btn-danger">Delete</button></a>
                 </td>
             </tr>
+            <% }) %>
         </tbody>
     </table>
     <div class="container">
-        <a href="/add" class="btn btn-outline-primary">Add Data</a>
+        <a href="/users/add" class="btn btn-outline-primary">Add Data</a>
     </div>
 
     <br>
 </div>
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
-        <li class="page-item disabled">
-            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+
+        <li class="page-item <%= page <= 1 ? 'disabled' : '' %>">
+            <a class="page-link"
+                href="/users<%= link.replace(`page=${parseInt(page)}`, `page=${(parseInt(page) - 1)}`) %>"
+                tabindex="-1" aria-disabled="true">Previous
+            </a>
         </li>
-        <li class="page-item"><a class="page-link" href="#">1</a></li>
-        <li class="page-item">
-            <a class="page-link" href="#">Next</a>
+        <% for (let i = 1; i <= totalPage; i++) { %>
+        <li class="page-item <%= page == i ? ' active' : '' %>">
+            <a class="page-link" href="/users<%= link.replace(`page=${parseInt(page)}`, `page=${i}`) %>"> <%= i %>
+            </a>
+        </li>
+        <% } %>
+        <li class="page-item <%= page >= totalPage ? 'disabled' : '' %>">
+            <a class="page-link"
+                href="/users<%= link.replace(`page=${parseInt(page)}`, `page=${(parseInt(page) + 1)}`) %>">Next
+            </a>
         </li>
     </ul>
 </nav>
@@ -137,5 +157,6 @@
     integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
     crossorigin="anonymous"></script>
 </body>
-
+<br>
+<%- include('../partials/footer') %>
 </html>
