@@ -33,7 +33,8 @@ CREATE TABLE members (
 
 INSERT INTO members (userid, role, projectid)
 VALUES (1, 'Manager', 1),
-(2, 'Software Developer', 2);
+(2, 'Software Developer', 2),
+(3, 'Quality Assurance', 3);
 
 -- tabel issues
 CREATE TABLE issues (
