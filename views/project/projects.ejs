@@ -8,29 +8,31 @@
   <hr>
   <h2>Filter</h2>
 
-  <form class="container col-sm-11">
+  <form class="container col-sm-11" method="GET">
+    <input type="hidden" name="page" value="1">
     <div class="form-group row">
       <label for="inputEmail3" class="col-sm-2 col-form-label">
-        <input class="form-check-input" type="checkbox" id="gridCheck1">ID</label>
+        <input class="form-check-input" type="checkbox" id="gridCheck1" name="checkId">ID</label>
       <div class="col-sm-10">
-        <input type="number" class="form-control" id="id" placeholder="ID">
+        <input type="number" class="form-control" id="id" name="inputId" placeholder="ID">
       </div>
     </div>
     <div class="form-group row">
       <label for="inputPassword3" class="col-sm-2 col-form-label">
-        <input class="form-check-input" type="checkbox" id="gridCheck1">Name</label>
+        <input class="form-check-input" type="checkbox" id="gridCheck1" name="checkName">Name</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" id="name" placeholder="Name">
+        <input type="text" class="form-control" id="name" name="inputName" placeholder="Name">
       </div>
     </div>
     <div class="form-group row">
       <label for="inputPassword3" class="col-sm-2 col-form-label">
-        <input class="form-check-input" type="checkbox" id="gridCheck1">Member</label>
+        <input class="form-check-input" type="checkbox" id="gridCheck1" name="checkMember">Member</label>
       <div class="col-sm-10">
-        <select class="form-control" name="member" id="member">
+        <select class="form-control" name="inputMember" id="member">
           <option selected disabled>Choose the member</option>
-          <option>Naya</option>
-          <option>Lini</option>
+          <% dataUser.forEach((item, index) => { %>
+          <option value="<%= item.userid %>"> <%= item.firstname %> <%= item.lastname %> </option>
+          <% }) %>
         </select>
       </div>
     </div>
@@ -40,24 +42,29 @@
     <div class="form-group row">
       <div>
         <button type="submit" class="btn btn-outline-primary">Search</button>
-        <a href="/" class="btn btn-outline-danger">Reset</a>
+        <a href="/projects" class="btn btn-outline-danger">Reset</a>
       </div>
     </div>
   </form>
+
   <hr>
+
   <h2>Options</h2>
-  <form class="container col-sm-11">
+  <form class="container col-sm-11" method="POST" action="/project/option">
     <div class="form-group row">
-      <label for="inputEmail3" class="col-sm-2 col-form-label">
-        <input class="form-check-input" type="checkbox" id="gridCheck1">ID</label>
+      <label for="inputEmail3" class="col-sm-2 col-form-label" for="checkId">
+        <input class="form-check-input" type="checkbox" id="checkId" name="cekid" value="true"
+          <%= option.cekid ? ' checked' : '' %>>ID</label>
     </div>
     <div class="form-group row">
-      <label for="inputPassword3" class="col-sm-2 col-form-label">
-        <input class="form-check-input" type="checkbox" id="gridCheck1">Name</label>
+      <label for="inputPassword3" class="col-sm-2 col-form-label" for="checkName">
+        <input class="form-check-input" type="checkbox" id="checkName" name="cekname"
+          <%= option.cekname ? ' checked' : '' %>>Name</label>
     </div>
     <div class="form-group row">
-      <label for="inputPassword3" class="col-sm-2 col-form-label">
-        <input class="form-check-input" type="checkbox" id="gridCheck1">Member</label>
+      <label for="inputPassword3" class="col-sm-2 col-form-label" for="checkMember">
+        <input class="form-check-input" type="checkbox" id="checkMember" name="cekmember"
+          <%= option.cekmember ? ' checked' : '' %>>Member</label>
     </div>
 
     <br>
@@ -68,26 +75,32 @@
       </div>
     </div>
   </form>
+
   <hr>
+
   <table class="table table-striped">
     <thead>
       <tr>
-        <th scope="col" style="text-align: center;">ID</th>
-        <th scope="col" style="text-align: center;">Name</th>
-        <th scope="col" style="text-align: center;">Member</th>
+        <th scope="col" style="text-align: center;" <%= option.cekid ? '' : 'hidden' %></th>>ID</th>
+        <th scope="col" style="text-align: center;" <%= option.cekname ? '' : 'hidden' %></th>>Name</th>
+        <th scope="col" style="text-align: center;" <%= option.cekmember ? '' : 'hidden' %></th>>Member</th>
         <th scope="col" style="text-align: center;">Action</th>
       </tr>
     </thead>
     <tbody>
+      dataProject.forEach((item.index) => {
       <tr>
-        <th scope="row" style="text-align: center;">1</th>
-        <td style="text-align: center;">Mark</td>
-        <td style="text-align: center;">Otto</td>
+        <th style="text-align: center;" <%= option.cekid ? '' : ' hidden' %>> <%= item.projectid %> </th>
+        <td style="text-align: center;" <%= option.cekname ? '' : ' hidden' %>> <%= item.name %> </td>
+        <td style="text-align: center;" <%= option.cekid ? '' : ' hidden' %></td>> <%= item.member %> </td>
         <td style="text-align: center;">
           <a href=""><button type="submit" class="btn btn-success">Edit</button></a>
-          <a href=""><button type="submit" class="btn btn-danger">Delete</button></a>
+          <a href="" onclick="return confirm('Are you sure you want to delete this item?');"
+            href="/project/delete/<%= item.projectid %>">><button type="submit"
+              class="btn btn-danger">Delete</button></a>
         </td>
       </tr>
+      <% }) %>
     </tbody>
   </table>
   <div class="container">
@@ -96,28 +109,41 @@
 
   <br>
 
+  <!-- pagination -->
   <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
-      <li class="page-item disabled">
-        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+      <li class="page-item <%= page <= 1 ? ' disabled' : '' %>">
+        <a class="page-link" href="/project<%= link.replace(`page=${parseInt(page)}`, `page=${parseInt(page) - 1}`) %>"
+          tabindex="-1">Previous
+        </a>
       </li>
-      <li class="page-item"><a class="page-link" href="#">1</a></li>
-      <li class="page-item">
-        <a class="page-link" href="#">Next</a>
+      <% for (let i = 1; i <= pages; i++) { %>
+      <li class="page-item <%= page == i ? ' active' : '' %>">
+        <a class="page-link" href="/projects<%= link.replace(`page=${page}`, `page=${i}`) %>"><%= i %>
+        </a>
       </li>
+      <li class="page-item <%= page == pages ? ' disabled' : '' %>">
+        <a class="page-link" href="/project<%= link.replace(`page=${parseInt(page)}`, `page=${parseInt(page) + 1}`)">Next</a>
+      </li>
+    <% } %>
     </ul>
   </nav>
+  <!-- end pagination -->
 </div>
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-  integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-  integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-  integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-</body>
-<br>
-<%- include('../partials/footer') %>
-</html>
+<script src=" https://code.jquery.com/jquery-3.4.1.slim.min.js"
+          integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
+          </script>
+          <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+          <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
+          </body>
+          <br>
+          <%- include('../partials/footer') %>
+
+          </html>
