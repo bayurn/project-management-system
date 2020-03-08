@@ -38,6 +38,5 @@ module.exports = (pool) => {
       return res.redirect('/');
     })
   });
-
   return router
 };
