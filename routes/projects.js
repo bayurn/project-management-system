@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 
 const isLoggedIn = (req, res, next) => {
     if (req.session.user) {
@@ -9,104 +10,122 @@ const isLoggedIn = (req, res, next) => {
     }
 }
 
-// module.exports = pool => {
-//     router.get('/', isLoggedIn, (req, res, next) => {
-//         let user = req.session.user;
-//         res.render('/project/projects', {
-//             user,
-//             menu: 'projects'
-//         })
-//     })
-//     return router
-// }
-
-module.exports = (pool) => {
-    router.get('/', isLoggedIn, function (req, res, next) {
-        const { checkID, checkName, checkMember, inputID, inputName, inputMember } = req.query;
-
-        const link = (req.url == '/') ? '/?page=1' : req.url;
-        const page = req.query.page || 1;
+module.exports = pool => {
+    router.get('/', isLoggedIn, (req, res, next) => {
+        const page = req.quert.page || 1;
         const limit = 3;
         const offset = (page - 1) * limit;
         let params = [];
+        const url = req.url == '/' ? '?page=1' : req.url;
+        const { checkprojectid, projectid, checkname, name, checkmember, member } = req.query;
 
-        if (checkID && inputID) {
-            params.push(`projects.projectid='${inputID}'`)
+        if (checkprojectid && projectid) {
+            params.push(`projects.projectid=${projectid}`)
         }
 
-        if (checkName && inputName) {
-            params.push(`projects.name LIKE '%${inputName}%'`)
+        if (checkname && name) {
+            params.push(`projects.name ILIKE '%${name.toLowerCase()}%'`)
         }
 
-        if (checkMember && inputMember) {
-            params.push(`members.userid='${inputMember}'`)
-        }
+        if (checkmember && member) {
+            params.push(`members.userid=${member}`)
+        };
 
-        let sql = `SELECT COUNT(id) as total FROM (SELECT DISTINCT projects.projectid AS id FROM projects LEFT JOIN members ON projects.projectid = members.projectid`;
-
+        let sql = `SELECT COUNT(id) AS total FROM (SELECT DISTINCT projects.projectid AS id FROM projects LEFT JOIN members ON projects.projectid = members.projectid`;
         if (params.length > 0) {
-            sql += ` WHERE ${params.join(" AND ")}`;
+            sql += `WHERE ${params.join(' AND ')}`;
         }
         sql += `) AS projectmember`;
 
         pool.query(sql, (err, count) => {
-            if (err) res.status(500).json(err);
+            const total = count.rows[0].total;
+            const page = Math.ceil(total / limit);
 
-            const total = count.hasOwnProperty('rows') ? count.rows[0].total : 0;
-            const pages = Math.ceil(total / limit);
-
-            sql = `SELECT DISTINCT projects.projectid, projects.name FROM projects LEFT JOIN members ON projects.projectid = members.projectid`
-
+            sql = `SELECT DISTINCT projects.projectid, projects.name FROM projects LEFT JOIN members ON projects.projectid = members.projectid`;
             if (params.length > 0) {
-                sql += ` WHERE ${params.join(" AND ")}`;
+                sql += ` WHERE ${params.join(' AND ')}`;
             }
-            sql += ` ORDER BY projects.projectid DESC LIMIT ${limit} OFFSET ${offset}`;
 
-            let subquery = `SELECT DISTINCT projects.projectid FROM projects LEFT JOIN members ON projects.projectid = members.projectid`;
+            sql += ` ORDER BY projects.projectid LIMIT ${limit} OFFSET ${offset}`
 
+            let subquery = `SELECT DISTINCT projects.projectid FROM projects LEFT JOIN members ON projects.projectid = members.projectid`
             if (params.length > 0) {
-                subquery += ` WHERE ${params.join(" AND ")}`
+                subquery += ` ORDER BY projects.projectid LIMIT ${limit} OFFSET ${offset}`
             }
-            subquery += ` ORDER BY projects.projectid DESC LIMIT ${limit} OFFSET ${offset}`;
 
-            let sqlMember = `SELECT projects.projectid, users.userid, CONCAT (users.firstname,' ',users.lastname) AS fullname FROM projects LEFT JOIN members ON projects.projectid = members.projectid LEFT JOIN users ON users.userid = members.userid WHERE projects.projectid IN (${subquery})`;
+            subquery += ` ORDER BY projects.projectid LIMIT ${limit} OFFSET ${offset}`
 
-            pool.query(sql, (err, projectData) => {
-                if (err) res.status(500).json(err);
+            let sqlMembers = `SELECT projects.projectid, users.userid, CONCAT (users.firstname,' ',users.lastname) AS fullname FROM projects LEFT JOIN members ON projects.projectid = members.projectid LEFT JOIN users ON users.userid = members.userid WHERE projects.projectid In (${subquery})`
 
-                pool.query(sqlMember, (err, memberData) => {
-                    if (err) res.status(500).json(err);
+            pool.query(sql, (err, response) => {
+                if (err) throw err;
+                pool.query(sqlMembers, (err, result) => {
+                    response.rows.map(project => {
+                        project.members = result.rows.filter(member => { return member.projectid == project.projectid }).map(data => data.fullname)
+                    });
 
-                    projectData.rows.map(project => {
-                        project.member = memberData.rows.filter(member => member.projectid == project.projectid).map(data => data.fullname).sort().join(', ').trim()
-                    })
+                    let sqlUsers = `SELECT * FROM users`;
+                    let sqlOption = `SELECT projectsoptions FROM users WHERE userid=${req.session.user.userid}`;
 
-                    let sqlUser = `SELECT * FROM users`;
-                    pool.query(sqlUser, (err, data) => {
-                        if (err) res.status(500).json(err)
+                    pool.query(sqlUsers, (err, data) => {
+                        pool.query(sqlOption, (err, option) => {
+                            if (err) {
+                                return res.send(err)
+                            }
 
-                        let sqlGetOption = `SELECT optionproject FROM users WHERE userid=${req.session.user.userid}`;
-                        pool.query(sqlGetOption, (err, dataOption) => {
-                            if (err) res.status(500).json(err);
-                            res.render('project/projects', {
-                                menu: 'projects',
-                                user: req.session.user,
-                                query: req.query,
-                                page,
-                                pages,
-                                link,
-                                dataUser: data.rows.map(item => item),
-                                dataProject: projectData.rows.map(item => item),
-                                projectMessage: req.flash('projectMessage'),
-                                option: dataOption.rows[0].optionproject
+                            let sqlAdmin = `SELECT isadmin FROM users WHERE userid=${req.session.user.userid}`;
+                            pool.query(sqlAdmin, (err, admin) => {
+                                admin = admin.rows;
+                                let isadmin = admin[0].isadmin;
+                                res.render('project/projects', {
+                                    title: 'Projects',
+                                    menu: 'projects',
+                                    data: response.rows,
+                                    isadmin,
+                                    query: req.query,
+                                    users: data.rows,
+                                    pagination: { pages, page, url },
+                                    user: req.session.user,
+                                    option: JSON.parse(option.rows[0].projectsoptions)
+                                })
                             })
                         })
                     })
                 })
             })
         })
+    })
+
+    router.post('/', (req, res) => {
+        let sql = `UPDATE users SET projectsoptions = '${JSON.stringify(req.body)}' WHERE userid = ${req.session.user.userid}`
+        pool.query(sql, (err) => {
+            if (err) {
+                return res.send(err)
+            };
+            res.redirect('/projects')
+        });
     });
 
-    // res.render('project/projects', {title: 'Judul', menu:'projects'})
+    router.get('/add', isLoggedIn, (req, res, next) => {
+        let sqlAdd = `SELECT userid, firstname || ' ' || lastname AS fullname FROM users`;
+        pool.query(sqlAdd, (err, result) => {
+            let sqladmin = `SELECT isadmin FROM users WHERE userid = ${req.session.user.userid}`;
+            pool.query(sqladmin, (err, admin) => {
+                admin = admin.rows;
+                let isadmin = admin[0].isadmin;
+                if (err) {
+                    return res.send(err)
+                };
+                res.render('projects/add', {
+                    title: 'Add Project',
+                    path: 'projects',
+                    isadmin,
+                    users: result.rows,
+                    user: req.session.user
+                });
+            });
+        });
+    });
+
     return router
 }
