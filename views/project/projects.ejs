@@ -8,29 +8,33 @@
   <hr>
   <h2>Filter</h2>
 
-  <form class="container col-sm-11" method="GET">
+  <form class="container col-sm-11" method="GET" action="">
     <input type="hidden" name="page" value="1">
     <div class="form-group row">
       <label for="inputEmail3" class="col-sm-2 col-form-label">
-        <input class="form-check-input" type="checkbox" id="gridCheck1" name="checkId">ID</label>
+        <input class="form-check-input" type="checkbox" id="checkId" name="checkprojectid"
+          <%= query.checkprojectid ? ' checked' : ''; %>>ID</label>
       <div class="col-sm-10">
-        <input type="number" class="form-control" id="id" name="inputId" placeholder="ID">
+        <input type="number" class="form-control" id="projectid" name="projectid" placeholder="ID"
+          value="<%= query.projectid %>">
       </div>
     </div>
     <div class="form-group row">
       <label for="inputPassword3" class="col-sm-2 col-form-label">
-        <input class="form-check-input" type="checkbox" id="gridCheck1" name="checkName">Name</label>
+        <input class="form-check-input" type="checkbox" id="checkname" name="checkname"
+          <%= query.checkname ? ' checked' : ''; %>>Name</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" id="name" name="inputName" placeholder="Name">
+        <input type="text" class="form-control" id="name" name="name" placeholder="Name" value="<%= query.name %>">
       </div>
     </div>
     <div class="form-group row">
       <label for="inputPassword3" class="col-sm-2 col-form-label">
-        <input class="form-check-input" type="checkbox" id="gridCheck1" name="checkMember">Member</label>
+        <input class="form-check-input" type="checkbox" id="checkmember" name="checkmember"
+          <%= query.checkmember ? ' checked' : ''; %>>Member</label>
       <div class="col-sm-10">
-        <select class="form-control" name="inputMember" id="member">
+        <select class="form-control" name="member" id="member">
           <option selected disabled>Choose the member</option>
-          <% dataUser.forEach((item, index) => { %>
+          <% users.forEach(item => { %>
           <option value="<%= item.userid %>"> <%= item.firstname %> <%= item.lastname %> </option>
           <% }) %>
         </select>
@@ -42,7 +46,7 @@
     <div class="form-group row">
       <div>
         <button type="submit" class="btn btn-outline-primary">Search</button>
-        <a href="/projects" class="btn btn-outline-danger">Reset</a>
+        <a href="/routes/projects" class="btn btn-outline-danger">Reset</a>
       </div>
     </div>
   </form>
@@ -50,21 +54,21 @@
   <hr>
 
   <h2>Options</h2>
-  <form class="container col-sm-11" method="POST" action="/project/option">
+  <form class="container col-sm-11" method="POST" action="">
     <div class="form-group row">
-      <label for="inputEmail3" class="col-sm-2 col-form-label" for="checkId">
-        <input class="form-check-input" type="checkbox" id="checkId" name="cekid" value="true"
-          <%= option.cekid ? ' checked' : '' %>>ID</label>
+      <label class="col-sm-2 col-form-label" for="projectid">
+        <input class="form-check-input" type="checkbox" name="oprojectid" value="true"
+          <%= option.oprojectid == 'true' ? ' checked' : '' %>>ID</label>
     </div>
     <div class="form-group row">
-      <label for="inputPassword3" class="col-sm-2 col-form-label" for="checkName">
-        <input class="form-check-input" type="checkbox" id="checkName" name="cekname"
-          <%= option.cekname ? ' checked' : '' %>>Name</label>
+      <label class="col-sm-2 col-form-label" for="name">
+        <input class="form-check-input" type="checkbox" name="oname" value="true"
+          <%= option.oname == 'true' ? ' checked' : '' %>>Name</label>
     </div>
     <div class="form-group row">
-      <label for="inputPassword3" class="col-sm-2 col-form-label" for="checkMember">
-        <input class="form-check-input" type="checkbox" id="checkMember" name="cekmember"
-          <%= option.cekmember ? ' checked' : '' %>>Member</label>
+      <label class="col-sm-2 col-form-label" for="member">
+        <input class="form-check-input" type="checkbox" name="omember"
+          <%= option.omember == 'true' ? ' checked' : '' %>>Member</label>
     </div>
 
     <br>
@@ -81,30 +85,30 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th scope="col" style="text-align: center;" <%= option.cekid ? '' : 'hidden' %></th>>ID</th>
-        <th scope="col" style="text-align: center;" <%= option.cekname ? '' : 'hidden' %></th>>Name</th>
-        <th scope="col" style="text-align: center;" <%= option.cekmember ? '' : 'hidden' %></th>>Member</th>
+        <% if (option.oprojectid == "true") { %><th scope="col" style="text-align: center;">ID</th> <% } %>
+        <% if (option.oname == "true") { %><th scope="col" style="text-align: center;">Name</th> <% } %>
+        <% if (option.omember == "true") { %><th scope="col" style="text-align: center;">Member</th> <% } %>
         <th scope="col" style="text-align: center;">Action</th>
       </tr>
     </thead>
     <tbody>
-      dataProject.forEach((item.index) => {
+      <% data.forEach((item) => { %>
       <tr>
-        <th style="text-align: center;" <%= option.cekid ? '' : ' hidden' %>> <%= item.projectid %> </th>
-        <td style="text-align: center;" <%= option.cekname ? '' : ' hidden' %>> <%= item.name %> </td>
-        <td style="text-align: center;" <%= option.cekid ? '' : ' hidden' %></td>> <%= item.member %> </td>
+        <% if (option.oprojectid == "true") { %><th style="text-align: center;"> <%= item.projectid %> </th> <% } %>
+        <% if (option.oname == "true") { %><td style="text-align: center;"> <%= item.name %> </td> <% } %>
+        <% if (option.omember == "true") { %><td style="text-align: center;"> <%= item.member %> </td> <% } %>
         <td style="text-align: center;">
-          <a href=""><button type="submit" class="btn btn-success">Edit</button></a>
-          <a href="" onclick="return confirm('Are you sure you want to delete this item?');"
-            href="/project/delete/<%= item.projectid %>">><button type="submit"
-              class="btn btn-danger">Delete</button></a>
+          <a href="project/edit/<%= item.projectid %>"><button type="submit" class="btn btn-success">Edit</button></a>
+          <% if (isadmin) { %> <a href="project/delete/<%= item.projectid %>"><button type="button"
+              class="btn btn-outline-danger">Delete</button>></a> <% } %>
         </td>
       </tr>
       <% }) %>
     </tbody>
   </table>
   <div class="container">
-    <a href="/add" class="btn btn-outline-primary">Add Data</a>
+    <% if (isadmin) { %> <a href="project/add"><button class="btn btn-outline-primary"
+        <%= isadmin != true ? ' disabled' : '' %></button>>Add Data</button></a> <% } %>
   </div>
 
   <br>
@@ -112,20 +116,26 @@
   <!-- pagination -->
   <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
-      <li class="page-item <%= page <= 1 ? ' disabled' : '' %>">
-        <a class="page-link" href="/project<%= link.replace(`page=${parseInt(page)}`, `page=${parseInt(page) - 1}`) %>"
+      <li class="page-item <%= pagination.page == 1 ? ' disabled' : '' %>">
+        <a class="page-link"
+          href="/projects<%= pagination.url.replace(`page=${pagination.page}`, `page=${parseInt(pagination.page) - 1}`); %>"
           tabindex="-1">Previous
         </a>
       </li>
-      <% for (let i = 1; i <= pages; i++) { %>
-      <li class="page-item <%= page == i ? ' active' : '' %>">
-        <a class="page-link" href="/projects<%= link.replace(`page=${page}`, `page=${i}`) %>"><%= i %>
+
+      <% for (var i = 1; i <= pagination.pages; i++) { %>
+      <li class="page-item <%= i == pagination.page ? ' active' : '' %>">
+        <a class="page-link"
+          href="/projects<%= pagination.url.replace(`page=${pagination.page}`, `page=${i}`) %>"><%= i %>
         </a>
       </li>
-      <li class="page-item <%= page == pages ? ' disabled' : '' %>">
-        <a class="page-link" href="/project<%= link.replace(`page=${parseInt(page)}`, `page=${parseInt(page) + 1}`)">Next</a>
+      <% } %>
+
+      <li class="page-item <%= pagination.page == pagination.pages ? ' disabled' : '' %>">
+        <a class="page-link"
+          href="/projects<%= pagination.url.replace(`page=${pagination.page}`, `page=${parseInt(pagination.page) + 1}`); %>">Next</a>
       </li>
-    <% } %>
+
     </ul>
   </nav>
   <!-- end pagination -->
@@ -134,16 +144,14 @@
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src=" https://code.jquery.com/jquery-3.4.1.slim.min.js"
-          integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
-          </script>
-          <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-            crossorigin="anonymous"></script>
-          <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-            crossorigin="anonymous"></script>
-          </body>
-          <br>
-          <%- include('../partials/footer') %>
+  integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
+  </script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+  integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+  integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+<br>
+<%- include('../partials/footer') %>
 
-          </html>
+</html>
